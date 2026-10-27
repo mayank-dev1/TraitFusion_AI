@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traitfusion AI — Neural Trait Intelligence</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for Radar Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS Link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- ================= GLOBAL BACKGROUNDS (Always active) ================= -->
+  <canvas id="dnaCanvas"></canvas>
+  <div class="ambient-glow-cyan"></div>
+  <div class="ambient-glow-purple"></div>
+
+  <!-- ================= SOS ALERT OVERLAY (Always injected, initially hidden) ================= -->
+  <div id="sosAlert" class="fixed inset-0 bg-red-950/95 z-[9000] hidden flex-col items-center justify-center backdrop-blur-xl">
+    <span class="text-7xl mb-4 animate-bounce">🚨</span>
+    <h1 class="text-5xl md:text-6xl font-extrabold text-red-500 tracking-widest mb-4 pulse-red glitch-text">CRITICAL ALERT</h1>
+    <p class="mono text-red-200 text-lg md:text-xl max-w-2xl text-center mb-8 px-4">EMERGENCY PROTOCOL ENGAGED: Self-harm or violent intent detected in linguistic data.</p>
+    <div class="bg-black/60 border-2 border-red-500 p-8 rounded-xl text-center shadow-[0_0_50px_rgba(239,68,68,0.6)]">
+      <h3 class="text-red-400 font-bold mb-2 tracking-widest">NATIONAL EMERGENCY HELPLINE</h3>
+      <p class="text-6xl font-extrabold text-white tracking-widest">112</p>
+    </div>
+    <button onclick="resetSOS()" class="mt-12 px-8 py-3 border border-red-500 text-red-400 hover:bg-red-500 hover:text-white rounded transition-colors mono text-sm tracking-widest font-bold z-50 cursor-pointer">OVERRIDE & RESET SYSTEM</button>
+  </div>
+
+  <!-- ================= 1. LANDING PAGE ================= -->
+  <section id="landing-page" class="relative z-20 w-full min-h-screen max-w-5xl mx-auto px-6 flex flex-col items-center justify-center text-center transition-all duration-1000">
+    
+    <!-- Top Status Bar -->
+    <div class="absolute top-6 left-6 right-6 flex justify-between items-center opacity-70">
+      <div class="mono text-xs text-cyan-400 tracking-widest border border-cyan-500/30 px-3 py-1 rounded bg-cyan-900/20">v2.0.4 // SECURE</div>
+      <div class="flex gap-2">
+        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]"></div>
+        <div class="w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee]"></div>
+      </div>
+    </div>
+
+    <!-- Main Hero Content -->
+    <div class="mb-4">
+      <div class="relative flex items-center justify-center h-20 w-20 mx-auto rounded-2xl bg-cyan-950 border border-cyan-400 glow-cyan mb-8 shadow-[0_0_40px_rgba(6,182,212,0.6)]">
+        <span class="text-5xl text-cyan-400 animate-pulse">🧠</span>
+      </div>
+      <h2 class="mono text-cyan-400 text-sm md:text-base tracking-[0.3em] uppercase mb-2">Cognitive Synchronization</h2>
+      <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-widest mb-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] glitch-text">
+        TRAITFUSION <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">AI</span>
+      </h1>
+      <p class="text-slate-400 text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto mt-6">
+       Advanced Personality Prediction System.
+       </p>
+    </div>
+
+    <!-- Start Button -->
+    <div class="mt-12">
+      <button id="start-btn" class="btn-glow border border-cyan-400 text-cyan-300 mono text-sm md:text-base uppercase tracking-[0.2em] font-bold py-4 px-10 rounded backdrop-blur-sm cursor-pointer hover:text-white">
+        [ Initialize Interface ]
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ================= 2. BOOT SEQUENCE (SPLASH) ================= -->
+  <section id="boot-sequence" class="hidden-state fade-out absolute inset-0 z-30 flex items-center justify-center bg-[#010409]/95 backdrop-blur-xl">
+    <div class="w-full max-w-2xl p-8 border border-cyan-500/30 bg-black/60 rounded shadow-[0_0_50px_rgba(34,211,238,0.1)] relative overflow-hidden">
+      <!-- Decor lines -->
+      <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50"></div>
+      
+      <div class="flex justify-between items-end border-b border-slate-800 pb-2 mb-4">
+        <span class="mono text-cyan-500 text-xs tracking-widest">SYSTEM_BOOTLOADER</span>
+        <span class="mono text-emerald-400 text-sm font-bold" id="progress-percent">00%</span>
+      </div>
+
+      <!-- Terminal Output -->
+      <div class="mono text-sm text-slate-400 min-h-[160px] flex flex-col justify-end space-y-1" id="terminal-output">
+        <!-- Logs will be injected here -->
+      </div>
+
+      <!-- Progress Bar Container -->
+      <div class="mt-6 w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+        <div id="progress-bar" class="h-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] w-0 transition-all duration-100 ease-linear"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= 3. ACTUAL DASHBOARD (Original Prototype) ================= -->
+  <section id="dashboard-view" class="hidden-state fade-out relative z-20 w-full flex flex-col flex-grow p-4 md:p-6 h-full">
+    
+    <!-- HEADER -->
+    <header class="hud-box p-4 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-4 shrink-0">
+      <div class="flex items-center gap-4">
+        <div class="relative flex items-center justify-center h-12 w-12 rounded-xl bg-cyan-950/80 border border-cyan-400/80 glow-cyan"><span class="text-2xl text-cyan-400 animate-pulse">🧠</span></div>
+        <div>
+          <div class="flex items-center gap-2"><h1 class="text-xl md:text-2xl font-extrabold tracking-wider text-white">TRAITFUSION <span class="text-cyan-400">AI</span></h1><span class="mono text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 border border-cyan-500/50">DASHBOARD</span></div>
+          <p class="mono text-xs text-cyan-100/70">PERSONALITY PREDICTION SYSTEM</p>
+        </div>
+      </div>
+      <div class="mono flex items-center gap-6 text-xs">
+        <button id="disconnect-btn" class="text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 px-3 py-1.5 rounded transition-all cursor-pointer">
+          ← DISCONNECT
+        </button>
+        <div class="border-l border-slate-700 pl-4 hidden md:block">
+          <span class="text-slate-400 block text-[10px]">ENGINE STATUS</span>
+          <span class="text-emerald-400 font-bold flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-900/40 border border-emerald-500/40"><span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span> ONLINE</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-5 mb-4 relative z-10">
+      
+      <!-- LEFT PANEL: Text Input & Control -->
+      <section class="lg:col-span-7 hud-box p-5 rounded-xl flex flex-col h-full relative">
+        <div class="scanline"></div>
+        <div class="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-3 shrink-0">
+          <span class="mono text-xs font-bold text-cyan-400 flex items-center gap-2"><span>[01]</span> SUBJECT BEHAVIORAL INGESTION</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-3 shrink-0">
+          <div>
+            <label class="mono block text-[11px] text-slate-300 mb-1">CANDIDATE ALIAS</label>
+            <input type="text" value="TEST_CANDIDATE_#26B" class="mono w-full px-3 py-2 rounded bg-slate-900/80 border border-slate-700 text-cyan-300 text-xs focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="mono block text-[11px] text-slate-300 mb-1">PSYCHOMETRIC FRAMEWORK</label>
+            <select class="mono w-full px-3 py-2 rounded bg-slate-900/80 border border-slate-700 text-cyan-300 text-xs focus:outline-none focus:border-cyan-400">
+              <option>Big-Five (OCEAN) Dimensional Model</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-grow mb-3 z-20">
+          <label class="mono text-[11px] text-slate-300 mb-1">LINGUISTIC DATA STREAM</label>
+          <textarea id="inputText" name="traitfusion_input" autocomplete="on" spellcheck="true" class="mono w-full flex-grow p-4 rounded bg-slate-900/80 border border-slate-700 text-slate-100 text-sm leading-relaxed focus:outline-none focus:border-cyan-400 resize-none shadow-inner min-h-[120px]">I like working alone. I always follow my schedule and finish my tasks on time. I enjoy solving math and coding problems.</textarea>
+        </div>
+
+        <div class="bg-black/80 backdrop-blur-md rounded-lg p-3 border border-cyan-900/80 font-mono text-[11px] space-y-1 mb-3 shrink-0 z-20 shadow-[inset_0_0_15px_rgba(0,0,0,0.9)]">
+          <div class="text-slate-400 flex justify-between"><span>> TERMINAL LOG STREAM</span><span id="timestamp"></span></div>
+          <div id="consoleLog" class="text-cyan-400 drop-shadow-[0_0_4px_rgba(6,182,212,0.9)]">> System Ready. Waiting for input...</div>
+        </div>
+
+        <button onclick="executeScan()" id="execBtn" class="mono w-full py-4 bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-700 hover:brightness-125 font-extrabold text-sm tracking-widest uppercase rounded-lg glow-cyan transition-all active:scale-[0.98] flex items-center justify-center gap-2 shrink-0 border border-cyan-400/50 z-20 cursor-pointer">
+          <span>⚡</span> <span id="btnLabel">INITIALIZE TRAITFUSION NEURAL INFERENCE</span>
+        </button>
+      </section>
+
+      <!-- RIGHT PANEL: Radar & Bars -->
+      <section class="lg:col-span-5 hud-box p-5 rounded-xl flex flex-col h-full relative">
+        <div class="scanline" style="animation-delay: 1.5s;"></div>
+        <div class="flex items-center justify-between border-b border-slate-700/80 pb-3 shrink-0">
+          <span class="mono text-xs font-bold text-indigo-400 flex items-center gap-2"><span>[02]</span> OCEAN TRAIT TOPOLOGY</span>
+        </div>
+
+        <!-- Canvas Container for Radar Chart -->
+        <div class="relative w-full flex-grow min-h-[200px] flex items-center justify-center py-1 z-20">
+          <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-slate-700/80 shrink-0 z-20">
+          <div><div class="flex justify-between text-[11px] mb-1"><span class="mono text-slate-300">Openness</span><span class="mono font-bold text-cyan-400" id="valO">82%</span></div><div class="w-full bg-slate-900/90 rounded-full h-1.5 overflow-hidden"><div id="barO" class="bg-cyan-400 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(6,182,212,0.8)]" style="width: 82%"></div></div></div>
+          <div><div class="flex justify-between text-[11px] mb-1"><span class="mono text-slate-300">Conscientiousness</span><span class="mono font-bold text-indigo-400" id="valC">92%</span></div><div class="w-full bg-slate-900/90 rounded-full h-1.5 overflow-hidden"><div id="barC" class="bg-indigo-400 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style="width: 92%"></div></div></div>
+          <div><div class="flex justify-between text-[11px] mb-1"><span class="mono text-slate-300">Extraversion</span><span class="mono font-bold text-purple-400" id="valE">35%</span></div><div class="w-full bg-slate-900/90 rounded-full h-1.5 overflow-hidden"><div id="barE" class="bg-purple-400 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(168,85,247,0.8)]" style="width: 35%"></div></div></div>
+          <div><div class="flex justify-between text-[11px] mb-1"><span class="mono text-slate-300">Agreeableness</span><span class="mono font-bold text-emerald-400" id="valA">60%</span></div><div class="w-full bg-slate-900/90 rounded-full h-1.5 overflow-hidden"><div id="barA" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(52,211,153,0.8)]" style="width: 60%"></div></div></div>
+          <div><div class="flex justify-between text-[11px] mb-1"><span class="mono text-slate-300">Emotional Stability</span><span class="mono font-bold text-amber-400" id="valS">80%</span></div><div class="w-full bg-slate-900/90 rounded-full h-1.5 overflow-hidden"><div id="barS" class="bg-amber-400 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_8px_rgba(251,191,36,0.8)]" style="width: 80%"></div></div></div>
+        </div>
+
+        <div class="p-3 mt-3 rounded-lg bg-cyan-950/50 border border-cyan-400/50 shrink-0 z-20 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          <div class="flex items-center justify-between"><span class="mono text-[10px] text-cyan-300 uppercase font-bold tracking-widest">Inferred Archetype</span></div>
+          <p id="archetypeText" class="text-sm font-extrabold text-white mt-1">Strategic Architect</p>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <!-- Custom JS Link -->
+  <script src="script.js"></script>
+</body>
+</html>
