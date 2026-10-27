@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app) 
 
 print("[INFO] Loading Traitfusion AI Model 'traitfusion_model.pkl'...")
-model = joblib.load('Traitfusion_model.pkl')
+model = joblib.load('traitfusion_model.pkl')
 print("[SUCCESS] Brain loaded! Server is ready to predict.")
 
 @app.route('/predict', methods=['POST'])

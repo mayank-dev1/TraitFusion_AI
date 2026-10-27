@@ -262,12 +262,13 @@ async function executeScan() {
     return;
   }
 
-  // --- REAL AI SERVER CONNECTION (FLASK) ---
+  // --- REAL AI SERVER CONNECTION (FLASK) VERCEL UPDATE ---
   btnLabel.innerText = "PROCESSING VECTOR EMBEDDINGS...";
-  consoleLog.innerText = "> Sending data to AI Backend (Port 5000)...";
+  consoleLog.innerText = "> Sending data to AI Backend...";
 
   try {
-    const response = await fetch('http://127.0.0.1:5000/predict', {
+    // Yahan maine http://127.0.0.1:5000 hata diya hai Vercel ke liye!
+    const response = await fetch('/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: textInput })
@@ -315,7 +316,7 @@ async function executeScan() {
     document.getElementById('archetypeText').innerText = arch;
 
   } catch (error) {
-    consoleLog.innerHTML = "<span class='text-red-500 font-bold'>> CONNECTION FAILED: Server band hai. Please run 'python3 app.py' in terminal.</span>";
+    consoleLog.innerHTML = "<span class='text-red-500 font-bold'>> CONNECTION FAILED: API Error.</span>";
   }
 
   btn.disabled = false; 
